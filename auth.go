@@ -36,8 +36,9 @@ type AdminAuth struct {
 }
 
 type MagicLink struct {
-	Token string
-	URL   string
+	Token    string `json:"token,omitempty"`
+	URL      string `json:"url,omitempty"`
+	EmailOTP string `json:"email_otp,omitempty"`
 }
 
 func (a *AdminAuth) MagicLink(email string) (MagicLink, error) {
@@ -49,5 +50,9 @@ func (a *AdminAuth) MagicLink(email string) (MagicLink, error) {
 	if err != nil {
 		return MagicLink{}, err
 	}
-	return MagicLink{resp.HashedToken, resp.ActionLink}, nil
+	return MagicLink{
+		Token:    resp.HashedToken,
+		URL:      resp.ActionLink,
+		EmailOTP: resp.EmailOTP,
+	}, nil
 }
