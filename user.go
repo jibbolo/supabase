@@ -11,18 +11,18 @@ import (
 type User struct {
 	types.User
 	AccessToken string
-	auth        *AnonAuth
+	anon        *AnonAuth
 }
 
 func (u *User) NewAuthenticatedRestClient() *postgrest.Client {
-	url := fmt.Sprintf("https://%s.supabase.co/rest/v1/", u.auth.ProjectReference)
+	url := fmt.Sprintf("https://%s.supabase.co/rest/v1/", u.anon.client.ProjectReference)
 	client := postgrest.NewClient(url, "", nil)
-	client.ApiKey(u.auth.ApiKey)
+	client.ApiKey(u.anon.client.ApiKey)
 	client.TokenAuth(u.AccessToken)
 	return client
 }
 
 func (u *User) NewAuthenticatedStorageClient() *storage_go.Client {
-	url := fmt.Sprintf("https://%s.supabase.co/storage/v1", u.auth.ProjectReference)
+	url := fmt.Sprintf("https://%s.supabase.co/storage/v1", u.anon.client.ProjectReference)
 	return storage_go.NewClient(url, u.AccessToken, nil)
 }

@@ -5,25 +5,25 @@ import (
 	"github.com/supabase-community/gotrue-go/types"
 )
 
-type Auth struct {
+type AuthClient struct {
 	gotrue.Client
 	ProjectReference,
 	ApiKey string
 }
 
-func NewAuth(projectReference, apiKey string) *Auth {
-	return &Auth{gotrue.New(
+func NewAuth(projectReference, apiKey string) *AuthClient {
+	return &AuthClient{gotrue.New(
 		projectReference,
 		apiKey,
 	), projectReference, apiKey}
 }
 
 type AnonAuth struct {
-	*Auth
+	client *AuthClient
 }
 
 func (a *AnonAuth) GetUser(accessToken string) (User, error) {
-	client := a.WithToken(accessToken)
+	client := a.client.WithToken(accessToken)
 	resp, err := client.GetUser()
 	if err != nil {
 		return User{}, err
@@ -32,7 +32,7 @@ func (a *AnonAuth) GetUser(accessToken string) (User, error) {
 }
 
 type AdminAuth struct {
-	*Auth
+	client *AuthClient
 }
 
 type MagicLink struct {
@@ -41,7 +41,7 @@ type MagicLink struct {
 }
 
 func (a *AdminAuth) MagicLink(email string) (MagicLink, error) {
-	client := a.WithToken(a.ApiKey)
+	client := a.client.WithToken(a.client.ApiKey)
 	resp, err := client.AdminGenerateLink(types.AdminGenerateLinkRequest{
 		Type:  types.LinkTypeMagicLink,
 		Email: email,
