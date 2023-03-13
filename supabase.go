@@ -10,8 +10,8 @@ type Supabase struct {
 }
 
 func MustNew(projectReference, anonKey, serviceKey string) *Supabase {
-	if projectReference == "" || anonKey == "" {
-		panic("Missing Supabase projectReference or anonKey")
+	if projectReference == "" || anonKey == "" || serviceKey == "" {
+		panic("Missing Supabase projectReference, anonKey or serviceKey")
 	}
 	return &Supabase{
 		Anon:  &AnonAuth{NewAuth(projectReference, anonKey)},
