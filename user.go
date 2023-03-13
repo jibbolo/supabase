@@ -11,13 +11,13 @@ import (
 type User struct {
 	types.User
 	AccessToken string
-	auth        *Auth
+	auth        *AnonAuth
 }
 
 func (u *User) NewAuthenticatedRestClient() *postgrest.Client {
 	url := fmt.Sprintf("https://%s.supabase.co/rest/v1/", u.auth.ProjectReference)
 	client := postgrest.NewClient(url, "", nil)
-	client.ApiKey(u.auth.AnonKey)
+	client.ApiKey(u.auth.ApiKey)
 	client.TokenAuth(u.AccessToken)
 	return client
 }

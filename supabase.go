@@ -5,20 +5,22 @@ import (
 )
 
 type Supabase struct {
-	Auth *Auth
+	Anon  *AnonAuth
+	Admin *AdminAuth
 }
 
-func MustNew(projectReference, anonKey string) *Supabase {
+func MustNew(projectReference, anonKey, serviceKey string) *Supabase {
 	if projectReference == "" || anonKey == "" {
 		panic("Missing Supabase projectReference or anonKey")
 	}
 	return &Supabase{
-		NewAuth(projectReference, anonKey),
+		Anon:  &AnonAuth{NewAuth(projectReference, anonKey)},
+		Admin: &AdminAuth{NewAuth(projectReference, serviceKey)},
 	}
 }
 
 func (s *Supabase) EchoKeyValidation(accessToken string, c echo.Context) (bool, error) {
-	user, err := s.Auth.GetUser(accessToken)
+	user, err := s.Anon.GetUser(accessToken)
 	if err != nil {
 		return false, err
 	}
