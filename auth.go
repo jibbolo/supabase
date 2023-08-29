@@ -1,8 +1,11 @@
 package supabase
 
 import (
+	"fmt"
+
 	"github.com/supabase-community/gotrue-go"
 	"github.com/supabase-community/gotrue-go/types"
+	storage_go "github.com/supabase-community/storage-go"
 )
 
 type AuthClient struct {
@@ -55,4 +58,9 @@ func (a *AdminAuth) MagicLink(email string) (MagicLink, error) {
 		URL:      resp.ActionLink,
 		EmailOTP: resp.EmailOTP,
 	}, nil
+}
+
+func (a *AdminAuth) NewStorageClient() *storage_go.Client {
+	url := fmt.Sprintf("https://%s.supabase.co/storage/v1", a.client.ProjectReference)
+	return storage_go.NewClient(url, a.client.ApiKey, nil)
 }
